@@ -3,9 +3,9 @@ var Constant = {
     numRows: 6,
     colX: 101,
     rowY: 83,
-    speed: 100,
+    speed: 500,
     gap: 0,
-    numEnemy: 1,
+    numEnemy: 4,
     gapX: 0.8
 };
 Constant.colsX = Constant.colX * Constant.numCols;
@@ -39,7 +39,7 @@ Enemy.prototype.update = function (dt) {
         this.x = 0;
         return;
     }
-    this.x += dt * Constant.speed;
+    this.x += dt * this.speed;
 };
 
 // 此为游戏必须的函数，用来在屏幕上画出敌人，
@@ -139,11 +139,13 @@ var allHeart = [];
 var allEnemies = [];
 for (var i = 0; i < Constant.numEnemy; i++) {
     var loc = {
-        "x": Math.round(Math.random() * 10) / 10 * Constant.colsX,
-        "y": (i % Constant.numRows + 1 - Constant.gap) * Constant.rowY
+        "x": Resources.random() * Constant.colsX,
+        "y": (i % 4 + 1 - Constant.gap) * Constant.rowY
     };
-    loc.y = (4 - Constant.gap) * Constant.rowY;
-    allEnemies.push(new Enemy(loc));
+    var enemy = new Enemy(loc);
+    enemy.speed = Resources.random() * Constant.speed;
+    // loc.y = (4 - Constant.gap) * Constant.rowY;
+    allEnemies.push(enemy);
 }
 var player = new Player();
 var star = new Star();

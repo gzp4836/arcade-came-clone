@@ -3,7 +3,7 @@
  * 这个工具还包含一个缓存层从而当你试图加载同一张图片多次的时候可以重复使用缓存的图片
  */
 
-(function() {
+(function () {
     var resourceCache = {};
     var loading = [];
     var readyCallbacks = [];
@@ -12,9 +12,9 @@
      * 路径字符串。然后再调用我们私有的图片加载函数。
      */
     function load(urlOrArr) {
-        if(urlOrArr instanceof Array) {
+        if (urlOrArr instanceof Array) {
             /* 如果开发者传进来一个图片数组，循环访问每个值，然后调用我们的图片加载器 */
-            urlOrArr.forEach(function(url) {
+            urlOrArr.forEach(function (url) {
                 _load(url);
             });
         } else {
@@ -27,7 +27,7 @@
 
     /* 这是我们私有的图片加载函数， 它会被公有的图片加载函数调用 */
     function _load(url) {
-        if(resourceCache[url]) {
+        if (resourceCache[url]) {
             /* 如果这个 URL 之前已经被加载了，那么它会被放进我们的资源缓存数组里面，
              * 然后直接返回那张图片即可。
              */
@@ -36,15 +36,17 @@
             /* 否则， 这个 URL 之前没被加载过而且在缓存里面不存在，那么我们得加载这张图片
              */
             var img = new Image();
-            img.onload = function() {
+            img.onload = function () {
                 /* 一旦我们的图片已经被加载了，就把它放进我们的缓存，然后我们在开发者试图
                  * 在未来再次加载这个图片的时候我们就可以简单的返回即可。
                  */
                 resourceCache[url] = img;
                 /* 一旦我们的图片已经被加载和缓存，调用所有我们已经定义的回调函数。
                  */
-                if(isReady()) {
-                    readyCallbacks.forEach(function(func) { func(); });
+                if (isReady()) {
+                    readyCallbacks.forEach(function (func) {
+                        func();
+                    });
                 }
             };
 
@@ -67,9 +69,9 @@
      */
     function isReady() {
         var ready = true;
-        for(var k in resourceCache) {
-            if(resourceCache.hasOwnProperty(k) &&
-               !resourceCache[k]) {
+        for (var k in resourceCache) {
+            if (resourceCache.hasOwnProperty(k) &&
+                !resourceCache[k]) {
                 ready = false;
             }
         }
@@ -81,11 +83,18 @@
         readyCallbacks.push(func);
     }
 
+    /* 获取0-10之间的随机数*/
+    function random() {
+        var random = Math.round(Math.random() * 10) / 10;
+        return random === 0 ? 0.3 : random;
+    }
+
     /* 这个对象通过创造一个公共的资源对象来定义公有的开发者可以访问的函数。*/
     window.Resources = {
         load: load,
         get: get,
         onReady: onReady,
-        isReady: isReady
+        isReady: isReady,
+        random: random
     };
 })();
