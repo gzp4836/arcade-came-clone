@@ -1,5 +1,5 @@
 /* Engine.js
-* 这个文件提供了游戏循环玩耍的功能（更新敌人和渲染）
+ * 这个文件提供了游戏循环玩耍的功能（更新敌人和渲染）
  * 在屏幕上画出出事的游戏面板，然后调用玩家和敌人对象的 update / render 函数（在 app.js 中定义的）
  *
  * 一个游戏引擎的工作过程就是不停的绘制整个游戏屏幕，和小时候你们做的 flipbook 有点像。当
@@ -10,7 +10,7 @@
  * 公开访问，以此使编写app.js的时候更加容易
  */
 
-var Engine = (function(global) {
+var Engine = (function (global) {
     /* 实现定义我们会在这个作用于用到的变量
      * 创建 canvas 元素，拿到对应的 2D 上下文
      * 设置 canvas 元素的高/宽 然后添加到dom中
@@ -65,7 +65,15 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
+    }
+
+    /* 碰撞代码的检测，现在我是写在了需要检测的对象的update函数里面，单独提出来个方法需要
+     * 传递allEnemies,player,allHeart对象，循环做碰撞检测。以后如果有多个玩家，计算就是成倍的
+     *
+     */
+    function checkCollisions() {
+
     }
 
     /* 这个函数会遍历在 app.js 定义的存放所有敌人实例的数组，并且调用他们的 update()
@@ -73,8 +81,14 @@ var Engine = (function(global) {
      * 这些更新函数应该只聚焦于更新和对象相关的数据/属性。把重绘的工作交给 render 函数。
      */
     function updateEntities(dt) {
-        allEnemies.forEach(function(enemy) {
+        allEnemies.forEach(function (enemy) {
             enemy.update(dt);
+        });
+        allHeart.forEach(function (heart,index,arr) {
+            if(heart.eated && player.x === heart.x && player.y === heart.y){
+                arr.splice(index,1);
+            }
+            heart.update();
         });
         player.update();
     }
@@ -91,7 +105,7 @@ var Engine = (function(global) {
                 'images/stone-block.png',   // 第一行石头
                 'images/stone-block.png',   // 第二行石头
                 'images/stone-block.png',   // 第三行石头
-                'images/grass-block.png',   // 第一行草地
+                'images/stone-block.png',  // 第四行石头
                 'images/grass-block.png'    // 第二行草地
             ],
             numRows = 6,
@@ -117,11 +131,16 @@ var Engine = (function(global) {
      */
     function renderEntities() {
         /* 遍历在 allEnemies 数组中存放的作于对象然后调用你事先定义的 render 函数 */
-        allEnemies.forEach(function(enemy) {
+        allEnemies.forEach(function (enemy) {
             enemy.render();
+        });
+        allHeart.forEach(function (heart) {
+            heart.render();
         });
 
         player.render();
+        star && star.render();
+
     }
 
     /* 这个函数现在没干任何事，但是这会是一个好地方让你来处理游戏重置的逻辑。可能是一个
@@ -140,7 +159,9 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/Star.png',
+        'images/Heart.png'
     ]);
     Resources.onReady(init);
 
